@@ -1,7 +1,7 @@
 # Portfolio of my work/what I learned connected to Neural Networks/Machine Learning while doing my Senior Project
 
 ## Introduction to Neural Networks
-To begin, a Neural Networks is computer code that is designed to function like the human brain. The network consists of several "layers" which a specific type of input data and output a specific type of output. Within these layers are "neurons," which are essentially miniature functions the perform weighted non-linearities on the input.
+To begin, a Neural Networks is computer code that is designed to function like the human brain. The network consists of several "layers" which a specific type of input data and transforms it into the output. Within these layers are "neurons," which are essentially miniature functions that perform weighted non-linearities on the input.
 
 
 ### Example of non-linearity
