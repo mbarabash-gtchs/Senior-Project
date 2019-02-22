@@ -9,6 +9,7 @@ To begin, a Neural Network is computer code that is designed to function like th
  * An input is given and is evaluated by the network.
  * The output of the network is evaluated; The “amount” of error made by the network is quantified as a quantity called loss (The ideal weights would produce a minimum loss value).
  * The weights are adjusted slightly to reduce the loss of the network. There are many ways to adjust this loss via different optimizers, but I chose to use the Adam Optimizer. 
+ 
 As mentioned above, a dataset is needed in order to train the network. However, there are two main conditions that the dataset needs to meet in order to train a working network. These are:
  * Size: Neural Networks are designed to work like the human brain does; this means that the network will take the easiest method to get correct answers. If a dataset that a network is training on is too small, then the network will end up simply memorizing the images and their corresponding answers instead of learning why the answers correspond with images.
  * Variance: If images within the dataset are similar to one another, then the network will struggle to identify images that are different from those it trained on.
@@ -20,7 +21,7 @@ I worked with Visual Neural Networks specifically, so I will describe how my neu
 Ideally, the process for a visual neural network would go like this:
 * 1) Image is fed to the network
 * 2) The first few layers of the network will identify the, for lack of a better term, "material" features such as edges, colors, etc. The image below shows an approximation of what an individual neuron may detect.
-![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg)
+![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg) (Image taken from Aravindh Mahendran and Andrea Vedaldi)
 
 * 3) The layers following the first few will identify how previous layers are interacting with each other, and will therefore be able to identify more abstract features, such as a face, an animal, or whatever.
 * 4) The final layers will use the outputs from the middle layers to provide an output that describes whatever the creator of the network wants it to describe.
