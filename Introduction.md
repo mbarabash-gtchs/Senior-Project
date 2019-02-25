@@ -1,2 +1,4 @@
-####Introduction
-  About a year ago from today (February 25), I began to learn about neural networks on my own time. 
+#### Introduction
+  About a year ago, I began to learn about neural networks on my own time. I started to learn about how they function and their uses. As time went on, I decided that I wanted to apply the knowledge that I had gained, and realised that senior project would be a perfect opportunity for me to do so. 
+  Machine learning, specifically utilizing neural networks, is what every major technology company is creating and using today. Google translate is a neural network. Facebook uses neural networks. If one wants to get into the technology field, then studying neural networks is a pretty safe option that is unlikely to fade away soon. 
+  I knew from the start of this project that, despite my ambitions, I would probably not create a network that would make large advancements in the field; I instead hoped that some of the things that I would learn while creating this network would help others in creating theirs.
