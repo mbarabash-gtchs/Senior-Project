@@ -34,8 +34,6 @@ To elaborate on step 4: If I wanted the network to tell me whether a picture is 
 My final product is a neural network that detects the position of a dogs tail. This means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. Theoretically, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network can be seen clearly; for example, a network that has been trained on MRI scans could learn to detect brain tumors. 
 
 ### Prerequisites for Final Product
-In terms of my prior knowledge: I had known a decent amount about neural networks from studying them over the summer. However, I only knew about the theory behind it; to give an analogy, if I were building a house, then I knew how to create a blueprint; I needed to learn how to physically build the house.
-Before I could begin working on my final product, there were several things I needed to do. 
 
 ## Approach to Problem
 
