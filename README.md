@@ -20,7 +20,8 @@ I worked with Visual Neural Networks specifically, so I will describe how my neu
 Ideally, the process for a visual neural network would go like this:
 * 1) Image is fed to the network
 * 2) The first few layers of the network will identify the, for lack of a better term, "material" features such as edges, colors, etc. The image below shows an approximation of what an individual neuron may detect.
-![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg) (Taken from Andrea Vedaldi and Aravindh Mahendran)
+![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg) 
+(Image taken from Andrea Vedaldi and Aravindh Mahendran)
 
 * 3) The layers following the first few will identify how previous layers are interacting with each other, and will therefore be able to identify more abstract features, such as a face, an animal, or whatever.
 * 4) The final layers will use the outputs from the middle layers to provide an output that describes whatever the creator of the network wants it to describe.
@@ -30,9 +31,7 @@ To elaborate on step 4: If I wanted the network to tell me whether a picture is 
 
 
 ### Final Product
-My final product is a neural network that detects the position of a dogs tail. This means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. Theoretically, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network can be seen clearly; for example, a network that has been trained on MRI scans could learn to detect brain tumors.
-
-The goal of my project was to train my neural net to recognize the location of a dogs tail. The reasoning behind this was that neural networks that classify objects are numerous, and I worked with them a bit while studying the basics of neural networks. I chose to do something a little different to up the difficulty of the project.
+My final product is a neural network that detects the position of a dogs tail. This means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. Theoretically, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network can be seen clearly; for example, a network that has been trained on MRI scans could learn to detect brain tumors. 
 
 ### Prerequisites for Final Product
 In terms of my prior knowledge: I had known a decent amount about neural networks from studying them over the summer. However, I only knew about the theory behind it; to give an analogy, if I were building a house, then I knew how to create a blueprint; I needed to learn how to physically build the house.
