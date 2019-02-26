@@ -21,6 +21,7 @@ Ideally, the process for a visual neural network would go like this:
 * 1) Image is fed to the network
 * 2) The first few layers of the network will identify the, for lack of a better term, "material" features such as edges, colors, etc. The image below shows an approximation of what an individual neuron may detect.
 ![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg) 
+
 (Image taken from Andrea Vedaldi and Aravindh Mahendran)
 
 * 3) The layers following the first few will identify how previous layers are interacting with each other, and will therefore be able to identify more abstract features, such as a face, an animal, or whatever.
@@ -31,13 +32,20 @@ To elaborate on step 4: If I wanted the network to tell me whether a picture is 
 
 
 ### Final Product
-My final product is a neural network that detects the position of a dogs tail. This means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. Theoretically, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network can be seen clearly; for example, a network that has been trained on MRI scans could learn to detect brain tumors. 
+My final product is a neural network that detects the position of a dogs tail. This means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. Theoretically, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network are easy to imagine; for example, a network that has been trained on MRI scans could learn to detect the position of tumors. 
 
 ### Prerequisites for Final Product
 
 ## Approach to Problem
 
 #### Building a dataset
-Building a dataset was actually something that I ended up spending a lot of time on. As I described above, training a neural network requires multiple inputs; however, an obvious problem is that if there are not many 
-#### Learn TensorFlow
-Learning TensorFlow (an open-source software library designed for handling data) would be something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the only way is through application.
+##### What is a dataset really?
+An collection of inputs that each have their corresponding output. For my dataset, I would need a collection of images of dogs as well for those images to have the location of the tail to be labeled. 
+##### The dataset problem:
+Building a dataset was actually something that I would need to spend a lot of time on. For my network to be optimal, I would need a few hundred images with labels at least, and more if possible. Traditionally, a dataset is created by using brute-force (meaning that every image and label is created manually). I did not want to spend 3 months doing nothing but building a dataset, so I decided to take an alternative approach. 
+![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/1252px-Blender_logo_no_text.svg.png)
+(Image taken from blender webpage)
+Blender (stylized blender) is a 3D modeling software that has an intersting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also changes the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. 
+The advantages of my approach is that my database has an unlimited size. The primary disadvantage is that the amount of variance that is present is limited by how much variance I was able to create.
+#### Learning TensorFlow
+Learning TensorFlow (an open-source software library designed for handling data) would be something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application.
