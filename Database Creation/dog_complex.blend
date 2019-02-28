@@ -112,7 +112,7 @@ def show_plane(visible=True, grass=True, carpet=True, blue=True, random_state=No
                 pln.data.materials[0].texture_slots[0].color = 0.3*rnd(3) + (0.1,0.1,0.7)  
                 pln.data.materials[0].diffuse_color =  0.3*rnd(3) + (0,0,0.7) 
             else:
-                # any color, second color likely a perturbation of 1st
+                # any color, second color likely a deviation of 1st
                 pln.data.materials[0].diffuse_color = rnd(3)
                 if rnd()>0.3:                  
                     pln.data.materials[0].texture_slots[0].color = np.clip ( np.array(pln.data.materials[0].diffuse_color) + 0.2*rnd(3) , 0, 1 )
@@ -640,15 +640,15 @@ def main( Nposes=20, iverts=range(0,9), ihorizs=range(0,9) ):
 
         ####### extra objects: #########    
         
-        # parameters are typically boolean, thus can generate them using rnd() right inside function calls:
+        # parameters are normally boolean, can be generated with rnd() inside function calls:
         
-        place_suzy( False )      ## Suzane
+        place_suzy( False )      ## Suzy
         show_plane( visible=False, grass=False, carpet=False)
         show_background(False)
-        #place_suzy( rnd()<.5 )      ## Suzane
-    #    show_plane( visible=(rnd()<.8),grass=(rnd()<.2), carpet=(rnd()<.2), blue=(rnd()<.5) ) ## plane
-        #could additionaly scale plane in the 5...>20 range (now 18.5)
-        #show_background(rnd()<.3)  # bckgrnd image - should ONLY be used if the plane and Suzane are both invisible    
+        place_suzy( rnd()<.5 )      ## Suzy
+        show_plane( visible=(rnd()<.8),grass=(rnd()<.2), carpet=(rnd()<.2), blue=(rnd()<.5) ) ## plane
+        could additionaly scale plane in the 5...>20 range (now 18.5)
+        show_background(rnd()<.3)  # bckgrnd image - only used if the plane and Suzane are both invisible    
 
         ############ light:            
         place_lights()     
