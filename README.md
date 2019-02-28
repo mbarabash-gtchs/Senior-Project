@@ -37,6 +37,7 @@ My final product is a neural network that detects the position of a dog's tail. 
 
 ## Approach to Problem
 
+A detailed explanation of the creation of my dataset and my neural network can be found in each of their respective folders.
 #### Building a dataset
 ##### What is a dataset really?
 A collection of inputs that each have their corresponding output. For my dataset, I would need a collection of images of dogs as well for those images to have the location of the tail to be labeled. 
@@ -55,4 +56,4 @@ Squeezenet is a publicly available, open source neural network that is pretraine
 Learning TensorFlow (an open-source software library designed for handling data) was something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application, so I learned TensorFlow as I built variants of my layers.
 
 #### Variants of my layers:
-
+A detailed explan
