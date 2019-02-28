@@ -48,5 +48,7 @@ Building a dataset was actually something that I would need to spend a lot of ti
 
 Blender (stylized blender) is a 3D modeling software that has an interesting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also changes the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. 
 The advantages of my approach is that my database has an unlimited size. The primary disadvantage is that the amount of variance that is present is limited by how much variance I was able to create.
-#### Learning TensorFlow
-Learning TensorFlow (an open-source software library designed for handling data) would be something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application.
+
+#### 
+##### Learning TensorFlow
+Learning TensorFlow (an open-source software library designed for handling data) was something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application. 

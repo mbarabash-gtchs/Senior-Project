@@ -1,0 +1,47 @@
+#Importing Libraries
+import bpy
+from bpy import context
+import numpy as np
+import os
+
+    
+    
+
+#Declaring variables that exist within blender.
+#"suzy" is an object that creates interferance. "camera" is the perspective that the program will see the scene from while rendering. "plane" is the ground.
+suzy = bpy.data.objects['Suzanne'] 
+camera = bpy.data.objects['Camera']
+plane=bpy.data.objects['Plane']
+
+
+bpy.context.scene.frame_current=1
+
+
+
+#Resets dog to starting position if it had been interacted with. bpy.ops refers to the object that is selected in blender, which at all times within my program will be the dog. If I were building a complicated model, I would most likely refer to the dog by its name within blender, but the simplicity of this model allowed for me to avoid this.
+bpy.ops.pose.rot_clear()
+bpy.ops.pose.scale_clear()
+bpy.ops.pose.transforms_clear()
+
+#Path where rendered images will be saved to.
+bpy.context.scene.render.filepath = 'C:\\Users\\Misha\\Documents\\blender\\testpic3'
+
+
+
+#Meat of the script. dog_complex has this set to be within a loop and calls on functions to perform these operations, but here I do them manually.
+
+#Randomizes position of dogs tail
+rand=np.random.randint(0, high=1000, size=1)
+bpy.ops.transform.rotate(value=0.107192, axis=(0, rand, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
+
+bpy.data.objects['Armature'].hide_render = False
+plane.hide_render = False
+bpy.data.objects['w'].hide_render = False
+suzy.hide_render = False
+suzy.scale = np.ones(3)
+
+
+bpy.data.scenes['Scene'].render.filepath = ('C:\\Users\\Misha\\Documents\\blender\\testpic3\\'+ 'dog')
+bpy.ops.anim.keyframe_insert_menu(type='WholeCharacter')
+bpy.ops.render.render(write_still = True)

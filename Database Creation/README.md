@@ -1,0 +1,1 @@
+This folder contains two files with code: dog_basic and dog_complex. dog_complex was the file I used to create my final product; dog_basic is a file that I created speicifically to allow for someone that does not know much about coding to look at and follow along. 
