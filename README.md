@@ -58,11 +58,11 @@ Learning TensorFlow (an open-source software library designed for handling data)
 #### Variants of my layers:
 
 ##### Version 1
-
+Loss did not decrease well with version one. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
 ##### Version 2
-
+Version 2 was a fixed variant of version 1, but it had another upside; it took inputs from multiple layers of squeezenet, meaning that there was more information to work with. Unfortunately, version 2 did not work as well as I had hoped.
 ##### Version 3
-
+Version 3 was a variant that I did not run much, as it was practically identical to version 2 meaning that there was little improvement.
 ##### Version 4
-
+Version 4 was the first completely working variant. 
 ##### Version 5
