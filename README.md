@@ -56,4 +56,13 @@ Squeezenet is a publicly available, open source neural network that is pretraine
 Learning TensorFlow (an open-source software library designed for handling data) was something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application, so I learned TensorFlow as I built variants of my layers.
 
 #### Variants of my layers:
-A detailed explan
+
+##### Version 1
+
+##### Version 2
+
+##### Version 3
+
+##### Version 4
+
+##### Version 5
