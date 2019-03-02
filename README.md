@@ -22,7 +22,7 @@ Ideally, the process for a visual neural network would go like this:
 * 2) The first few layers of the network will identify the, for lack of a better term, "material" features such as edges, colors, etc. The image below shows an approximation of what an individual neuron may detect.
 ![alt text](http://cs231n.github.io/assets/cnnvis/filt1.jpeg) 
 
-(Image taken from Andrea Vedaldi and Aravindh Mahendran)
+(Image taken from Andrea Vedaldi and Aravindh Mahendran https://arxiv.org/abs/1412.0035)
 
 * 3) The layers following the first few will identify how previous layers are interacting with each other, and will therefore be able to identify more abstract features, such as a face, an animal, etc.
 * 4) The final layers will use the outputs from the middle layers to provide an output that describes whatever the creator of the network wants it to describe.
@@ -43,7 +43,7 @@ A detailed explanation of the creation of my dataset and my neural network can b
 A collection of inputs that each have their corresponding output. For my dataset, I would need a collection of images of dogs as well for those images to have the location of the tail to be labeled. 
 ##### The dataset problem:
 Building a dataset was actually something that I would need to spend a lot of time on. For my network to be optimal, I would need a few hundred images with labels at least, and more if possible. Traditionally, a dataset is created by using brute-force (meaning that every image and label is created manually). I did not want to spend 3 months doing nothing but building a dataset, so I decided to take an alternative approach. 
-![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/1252px-Blender_logo_no_text.svg.png)
+![alt text](https://i.imgur.com/zNROvm9.png)
 (Image taken from Blender Foundation)
 
 Blender (stylized blender) is a 3D modeling software that has an interesting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also changes the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. 
@@ -68,5 +68,5 @@ Version 2 was a fixed variant of version 1, but it had another upside; it took i
 ##### Version 3
 Version 3 was a variant that I did not run much, as it was practically identical to version 2. 
 ##### Version 4
-Version 4 was the first satisfactory variant of my layers. It had an excellent fit accuracy (it was able to overfit larger datasets) and was able to 
+Version 4 was the first satisfactory variant of my layers. It had an excellent fit accuracy (it was able to overfit larger datasets) and reached reasonable accuracy during validation.
 ##### Version 5
