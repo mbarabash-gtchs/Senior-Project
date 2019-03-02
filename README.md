@@ -7,10 +7,10 @@ This main document is split into two sections; the first describes the problem/g
 To begin, a Neural Network is computer code that is designed to function like the human brain. The network consists of several "layers," which takes a specific type of input data and transforms it into the desired output. Within these layers are "neurons," which are essentially miniature functions that perform non-linearities on the weighted sum of their inputs. In order to reach the correct output, the neurons need their weights to be properly tuned. The values of those weights are calculated through a process called training. 
 #### The training process goes as follows:
  * An input is given and evaluated by the network.
- * The output of the network is evaluated; The “amount” of error made by the network is quantified as a quantity called loss (The ideal weights would produce a minimum loss value).
+ * The output of the network is evaluated; The “amount” of error made by the network is quantified as a quantity called loss (The ideal weights would produce a minimum loss value). Note: accuracy and loss are two seperate values. A model may have an accuracy of 100% but a none-zero loss.
  * Weights are adjusted slightly to reduce the loss of the network. There are many ways to adjust this loss via different optimizers, but I chose to use the Adam Optimizer. 
 As mentioned above, a dataset is needed to train the network. However, there are two main conditions that the dataset needs to meet to train a working network. These are:
- * Size: Neural Networks are designed to work like the human brain does; this means that the network will take the easiest method to get correct answers. If a dataset that a network is training on is too small, then the network will end up simply memorizing the images and their corresponding answers instead of learning why the answers correspond with images.
+ * Size: Neural Networks are designed to work like the human brain does; this means that the network will take the easiest method to get correct answers. If a dataset that a network is training on is too small, then the network will end up simply memorizing the images (called overfitting) and their corresponding answers instead of learning why the answers correspond with images.
  * Variance: If images within the dataset are similar to one another, then the network will struggle to identify images that are different from those it trained on.
 
 
@@ -54,15 +54,19 @@ The advantages of my approach is that my database has an unlimited size. The pri
 Squeezenet is a publicly available, open source neural network that is pretrained and is designed for classification. Squeezenet is the lower layers of my network; the top layers of Squeezenet which perform the final steps of classification were removed, and replaced with my layers. Squeezenet, like many neural networks, runs on TensorFlow, meaning that I also used TensorFlow for my layers. 
 ##### Learning TensorFlow
 Learning TensorFlow (an open-source software library designed for handling data) was something that I would do throughout the coding process. There is no easy way to directly learn TensorFlow that I am aware of; the easiest way seems to be to learn through application, so I learned TensorFlow as I built variants of my layers.
+##### Usage of Squeezenet
+Squeezenet is a pretrained model, meaning that the weights within it are very well optimized. This means that, during training, squeezenets values should be touched minimally or not at all (A less important but valid reason is that training a larger network requires more memory on a computer. While my computer may have been able to handle this training, it would also likely cause training to last longer). My approach was to have Squeezenet perform its work on the data, then have my model train on the outputs of Squeezenet. 
+##### TFRecords
+TFRecords is a quick, efficient way of storing information in TensorFlow onto a harddrive that will later be read by TensorFlow again. 
 
-#### Variants of my layers:
+#### Brief Overview of Variants of My Layers:
 
 ##### Version 1
-Loss did not decrease well with version one. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
+Loss did not decrease well with version 1. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
 ##### Version 2
-Version 2 was a fixed variant of version 1, but it had another upside; it took inputs from multiple layers of squeezenet, meaning that there was more information to work with. Unfortunately, version 2 did not work as well as I had hoped.
+Version 2 was a fixed variant of version 1, but it had another upside; it took inputs from multiple layers of squeezenet, meaning that there was more information to work with. Unfortunately, version 2 did not work as well as I had hoped, and again had the problem of not being able to overfit datasets that were larger than miniscule.
 ##### Version 3
-Version 3 was a variant that I did not run much, as it was practically identical to version 2 meaning that there was little improvement.
+Version 3 was a variant that I did not run much, as it was practically identical to version 2. 
 ##### Version 4
-Version 4 was the first completely working variant. 
+Version 4 was the first satisfactory variant of my layers. It had an excellent fit accuracy (it was able to overfit larger datasets) and was able to 
 ##### Version 5
