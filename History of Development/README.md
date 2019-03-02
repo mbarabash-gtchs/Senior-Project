@@ -30,4 +30,4 @@ Version 4 made no immediate changes to appended layers; the only changes were to
 I eventually changed the appended layers as well. One of the networks was deeper and had more layers (named Version 4 extended), while the other used more average pools instead of convolutions (named Version 4 average pool). I did not get significan result changes from either of them.
 
 #### Version 5
-Version 5
+Version 5 
