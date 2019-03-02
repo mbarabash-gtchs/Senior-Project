@@ -18,6 +18,6 @@ The changes performed were to the appended model. In version 3, the size of each
 ![alt text](https://i.imgur.com/mEHsQai.png)
 #### Version 4
 Version 4 made no changes to appended layers; the only changes were to the full model. Version 4 utilized version 2's appended layers, and simply changed the way that training occured. The significant difference was the introduction of normalization. Every input would be normalized prior to being evaluated by the network, which allows the network to work better. Normalization was done by taking the average of all inputs and then dividing by the standard deviation.
-![alt text] (https://i.imgur.com/w2iNRaF.png)
+![alt text](https://i.imgur.com/w2iNRaF.png)
 
 #### Version 5
