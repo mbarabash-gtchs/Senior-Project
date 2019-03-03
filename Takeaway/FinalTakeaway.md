@@ -1,1 +1,1 @@
-I have uploaded two notebooks which contain code that can be referred to by anyone at a later date. I have also included the final weights of my network, so if someone wishes to run my network and begin with my weights, they could use those. 
+I have uploaded two notebooks within each file which contain code that can be looked at to see what I have done. The complex variant of each notebook which contains  of I have also included the final weights of my network, so if someone wishes to run my network and begin with my weights, they could use those. 

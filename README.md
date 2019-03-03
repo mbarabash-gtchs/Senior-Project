@@ -57,9 +57,10 @@ Learning TensorFlow (an open-source software library designed for handling data)
 ##### Usage of Squeezenet
 Squeezenet is a pretrained model, meaning that the weights within it are very well optimized. This means that, during training, squeezenets values should be touched minimally or not at all (A less important but valid reason is that training a larger network requires more memory on a computer. While my computer may have been able to handle this training, it would also likely cause training to last longer). My approach was to have Squeezenet perform its work on the data, then have my model train on the outputs of Squeezenet. 
 ##### TFRecords
-TFRecords is a quick, efficient way of storing information obtained in TensorFlow onto a harddrive that will later be read by TensorFlow again. 
+TFRecords is a quick, efficient way of storing information obtained in TensorFlow onto a harddrive that will later be read by TensorFlow again. I learned how to use TFRecords for two reasons: 1) in order to save the outputs of Squeezenet to later run through my network and 2) in order to save the weights that were generated during training.
 
 #### Brief Overview of Variants of My Layers:
+See an indepth look in the History of Development directory
 
 ##### Version 1
 Loss did not decrease well with version 1. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
@@ -70,3 +71,4 @@ Version 3 was a variant that I did not run much, as it was practically identical
 ##### Version 4
 Version 4 was the first satisfactory variant of my layers. It had an excellent fit accuracy (it was able to overfit larger datasets) and reached reasonable accuracy during validation.
 ##### Version 5
+The model of version 5 was a variant of version 4 that I built, 
