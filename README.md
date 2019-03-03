@@ -71,4 +71,4 @@ Version 3 was a variant that I did not run much, as it was practically identical
 ##### Version 4
 Version 4 was the first satisfactory variant of my layers. It had an excellent fit accuracy (it was able to overfit larger datasets) and reached reasonable accuracy during validation.
 ##### Version 5
-The model of version 5 was a variant of version 4 that I built, 
+The model of version 5 was the best variant that I had built. It was able to reach a higher validation accuracy than any of the other variants on a very large dataset.

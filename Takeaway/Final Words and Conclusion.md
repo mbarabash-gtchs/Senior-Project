@@ -1,0 +1,1 @@
+This project took a lot of time to complete. I ended up running into many unexpected problems (which ironically was expected), but I was able to learn a lot because of them. Throughout the entire coding process, I ran into obstacles as trivial as syntax and a lack of knowledge, and as complex as why a network was unable to produce results on a validation set. 
