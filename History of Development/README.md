@@ -1,4 +1,4 @@
-Note: all coding was done within jupyter. I have uploaded the source code for my layers of the neural network. 
+Note: all coding was done within jupyter. I have uploaded the source code for my layers of the neural network here, but their implementation can be seen in the Takeaway directory.
 
 Also please note: "model" refers to the appended layers themselves. "Full model" refers to both the appended layers as well as the code that trains the model.
 
