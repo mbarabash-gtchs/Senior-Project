@@ -1,0 +1,726 @@
+import bpy
+from bpy import context
+import numpy as np
+import os
+
+################# adjustables:
+
+os.chdir("C:\\Users\\Misha\\Documents\\blender")
+
+fnamebase = 'C:\\Users\\Misha\\Documents\\blender\\testpic6stable\\pic_'
+
+csvfname = 'C:\\Users\\Misha\\Documents\\blender\\testpic6stable\\angles.csv'
+
+
+
+################################  global objects:
+
+rnd=np.random.random ### shortcut for rnd
+
+
+#cam=bpy.data.objects['Camera']
+
+origin=bpy.data.objects['Empty']
+
+lamp=bpy.data.objects['Lamp']
+lamp1=bpy.data.objects['Lamp1']
+sun=bpy.data.objects['Sun']
+
+szn=bpy.data.objects['Suzanne']
+pln=bpy.data.objects['Plane']
+
+
+
+
+######################################################## auxiliary functions #################################
+
+def initializePose():
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.ops.object.mode_set(mode='POSE')
+    bpy.data.objects['Armature'].data.bones['0-control'].select=True
+
+
+def placeSuzane(visible=False, random_state=None): 
+    '''PlaceSuzane() should be called AFTER the "origin" (the Empty) is positioned!
+    random_state is from get_state()'''
+
+    if random_state is not None:
+        np.random.set_state(random_state)
+
+
+    szn.hide_render= not visible
+    if not visible:
+        return
+    else:        
+        szn.scale= .2 + np.random.random(3)*4.8 #3d vector, each from .2 to 5, remember scale[0]!!!
+        szs0=szn.scale[0]
+        if np.random.random()<0.5  or szs0>8./3*origin.scale or np.max(szn.scale)>1.5 :
+            # Szn behind
+            szn.location[0]= -2*szs0 - (10-2*szs0)*np.random.random()
+        else:
+#            szs= .2 + np.random.random(3)*1.3
+#            szn.scale =szs
+#            szs0=szs[0]
+            szn.location[0]=2*szs0 + (8*origin.scale[0]-3*szs0)*np.random.random()
+        # either negative(behind) - from -10 to -2*scale[0]
+        # or positive (in front): from 2*scale[0] to 8*origin.scale-szn.scale[0]
+        #        for simplicity   from 2*scale[0] to 3-szn.scale[0],
+        #        can only be positive if szn.scale < 1 (more generally <8/3*origin.scale)
+        
+        szn.location[1]=-3+6*np.random.random() #left/right from -3 to 3 (or larger depending on ...)
+        szn.location[2]=-2+4*np.random.random() # burried/flying from -2 to 2
+        szn.rotation_euler=-3.1+ 6.2*np.random.random(3) # each from -pi to pi - random orientation        
+        #colors:
+        szn.data.materials[0].texture_slots[0].texture.type=['MARBLE','STUCCI','MAGIC'][np.random.randint(3)] 
+        szn.data.materials[0].texture_slots[0].color=np.random.random(3) #any
+        szn.data.materials[0].diffuse_color=rnd(3) #any
+        szn.data.materials[0].texture_slots[0].scale= .1+ 10*rnd(3) #.1 (huge) to 10(fine)
+
+
+
+def grassColor():
+    '''color such that G>2*B,G>R, and G>.5''' 
+    color=rnd(3)
+    while( color[1]<0.5 or color[0]>=color[1] or color[2]>=2*color[1]):
+        color=rnd(3)
+    return color
+
+def showPlane(visible=True, grass=True, carpet=True, blue=True, random_state=None):
+    ''' grass overrides carpet, carpet overrides blue '''
+    if random_state is not None:
+        np.random.set_state(random_state)
+
+    pln.hide_render = not visible
+    if not visible:
+        return
+    else:      
+        if grass:
+            pln.modifiers[0].show_render = True
+            bpy.data.particles['grass'].hair_length = 0.05+ 0.3*rnd() #0.05..0.3
+            #for colors below, G>2*B,G>R, ideally G>.5 
+            pln.data.materials[0].diffuse_color = grassColor()
+            pln.data.materials[0].texture_slots[0].color = grassColor()
+        elif carpet:
+            pln.modifiers[0].show_render = True
+            bpy.data.particles['grass'].hair_length = 0.05
+            color=0.4+rnd(3)*0.2
+            pln.data.materials[0].diffuse_color = color
+            pln.data.materials[0].texture_slots[0].color = np.clip( color +rnd(3)*0.1, 0, 1 )
+        else:
+            pln.modifiers[0].show_render=False
+            if blue:
+                pln.data.materials[0].texture_slots[0].color = 0.3*rnd(3) + (0.1,0.1,0.7)  
+                pln.data.materials[0].diffuse_color =  0.3*rnd(3) + (0,0,0.7) 
+            else:
+                # any color, second color likely a perturbation of 1st
+                pln.data.materials[0].diffuse_color = rnd(3)
+                if rnd()>0.3:                  
+                    pln.data.materials[0].texture_slots[0].color = np.clip ( np.array(pln.data.materials[0].diffuse_color) + 0.2*rnd(3) , 0, 1 )
+                else:
+                    pln.data.materials[0].texture_slots[0].color = rnd(3)
+    
+
+
+def showBackground(visible=True, random_state=None):
+    if random_state is not None:
+        np.random.set_state(random_state)
+    if not visible:
+        bpy.data.textures["Background"].type = 'NONE'
+        return
+    else:      
+        bpy.data.textures["Background"].type = 'IMAGE' # 'IMAGE' or 'NONE'
+        
+        images =    ['room1',               'room2',                'room3']
+        cropmins=   [( (0.2,0.4),(0.1,0.2) ),( (0.2,0.4),(0.2,0.4) ),( (0.2,0.4), (0.2,0.3) ) ] # range of allowed crop mins
+        cropmaxs=   [( (0.5,0.8),(0.3,0.6) ),( (0.5,0.8),(0.5,0.8) ),( (0.5,0.8), (0.5,0.8) ) ] # range of allowed crop maxs
+        cropdeltas= [( (0.1,0.2),(0.1,0.3) ),((0.1,0.4),(0.1,0.4) ),( (0.1,0.4), (0.1,0.5) ) ] # range of allowed dims after crop
+        caseN=np.random.randint(3)
+        
+        bpy.data.textures["Background"].image.filepath='//backgrounds\\' + images[caseN]+'.jpg'
+        bpy.data.textures["Background"].extension='EXTEND'
+        cmin=cropmins[caseN]
+        cmax=cropmaxs[caseN]
+        cdel=cropdeltas[caseN]
+        cropfound=False
+        while not cropfound:
+            mnx = cmin[0][0]+ (cmin[0][1]-cmin[0][0])*rnd()
+            mny = cmin[1][0]+ (cmin[1][1]-cmin[1][0])*rnd()
+            mxx = cmax[0][0]+ (cmax[0][1]-cmax[0][0])*rnd()
+            mxy = cmax[1][0]+ (cmax[1][1]-cmax[1][0])*rnd()
+            bpy.data.textures["Background"].crop_min_x = mnx
+            bpy.data.textures["Background"].crop_min_y = mny
+            bpy.data.textures["Background"].crop_max_x = mxx
+            bpy.data.textures["Background"].crop_max_y = mxy
+            #print("debug: caseN=",caseN, ", crops=", (mnx,mny,mxx,mxy))
+            if ( mxx-mnx>cdel[0][0] and mxx-mnx<cdel[0][1] and mxy-mny>cdel[1][0] and mxy-mny<cdel[1][1] ):
+                cropfound=True
+
+    
+def placeLights(random_state=None):
+
+    if random_state is not None:
+        np.random.set_state(random_state)
+    entot = 0
+    while(entot<1 or entot>3):
+        entot = 0
+        #enthis = rnd()*0.55 + 0.15 # shadows - to train on hard cases
+        enthis = 1.5*rnd() +0.3 # simpler - does not allow extreme shades
+        
+        bpy.context.scene.world.light_settings.environment_energy = enthis
+                    #0.1 to 0.5
+                    # this may be overridden at rendering - should fix this
+        entot += enthis
+                            
+        lamp.location = (4*rnd(3)+(2,2,1) )* np.concatenate([np.random.choice([-1,1],2),[1]])   #x,y>2,z>1 #first () - values, second () - signs
+        g= 0.6+rnd()*0.4
+        b= 0.2+rnd()*(g-0.2)
+        lamp.data.color=(1,g,b) #r=1, g=0.6...1, b=0.2...1, b<g
+        enthis=0.1+2.*rnd() # 0.1 to 2.5
+        lamp.data.energy=enthis
+        entot += enthis
+
+        lamp1.location = ( 0.75*rnd(3)+1.25 )*  np.concatenate([np.random.choice([-1,1],2),[1]])
+        #x,y,z all between 1.25 and 2 (sphere cutoff!)
+        #lamp1.location = ( rnd(3)+1. )*  np.concatenate([np.random.choice([-1,1],2),[1]])
+        ##x,y,z all between 1 and 2 (sphere cutoff!)
+        g= 0.6+rnd()*0.4
+        b= 0.2+rnd()*(g-0.2)
+        lamp1.data.color=(1,g,b) #r=1, g=0.6...1, b=0.2...1, b<g
+        enthis=rnd() # could use 0.1 to 2.5
+        #enthis=0.1+2*rnd() # could use 0.1 to 2.5
+        lamp1.data.energy=enthis
+        entot += enthis
+        
+        enthis=2*rnd() # 0to 3
+        sun.data.energy=enthis
+        entot += enthis
+
+
+def colorDog(target_color=None, intensities=None, random_state=None):
+    ''' optional target_color is a 3-tuple (rgb),
+    intensites is 2-tuple only used if target_color is supplied
+    '''
+    if random_state is not None:
+        np.random.set_state(random_state)
+
+    ## dog color:
+    # dog body color: 
+    #off-white 1,1,1
+    # light-gray .85...1.0 *3
+    #beige 1, .8, .5
+    #gray-beigte 1, .9, .8
+    #dull-dark-grey .5 .5 .5
+    #black <.1 e.g. .05 .05 .05
+    colors=[ (1,1,1),]*3 + [(.85+.15*rnd(3)),]*2 + [(1,.8,.5), (1,.9,.8), (.5,.5,.5), (.05,.05,.05) ]
+    if target_color is None:
+        bpy.data.objects['w'].data.materials[0].diffuse_color = colors[np.random.randint(len(colors))]
+        bpy.data.objects['w'].data.materials[0].diffuse_intensity=0.5+0.5*rnd() #.5 to 1
+        bpy.data.objects['w'].data.materials[0].specular_intensity = 0.5*rnd() #0 to .5
+    else:
+        bpy.data.objects['w'].data.materials[0].diffuse_color = target_color
+        if intensities is None:
+            bpy.data.objects['w'].data.materials[0].diffuse_intensity=0.5 #.5 to 1
+            bpy.data.objects['w'].data.materials[0].specular_intensity = 0.3 #0 to .5
+        else:
+            bpy.data.objects['w'].data.materials[0].diffuse_intensity=intensities[0]
+            bpy.data.objects['w'].data.materials[0].specular_intensity = intensities[1]
+
+
+
+def scale_hair(scale=None, min=0.11, max=2, random_state=None):
+
+    if random_state is not None:
+        np.random.set_state(random_state)        
+    if scale is None:
+        HAIR_SCALE_FACTOR = np.exp( np.log(min)+ rnd()*np.log(max/min))
+    else:
+        HAIR_SCALE_FACTOR = scale
+    for hair in bpy.data.objects['w'].particle_systems[0].particles:
+        for hkey in hair.hair_keys:
+            hkey.co_local *= HAIR_SCALE_FACTOR
+    return HAIR_SCALE_FACTOR
+
+
+def style_body_hair():
+    #
+    #whether to keep fur texture detail:
+    h_b= bpy.data.particles["hair_body"]
+    h_b.use_strand_primitive = True # True is also much faster
+    #
+    # how dense is fur:
+    h_b.rendered_child_count = [3,10,50][np.random.randint(3)]
+    # how fur is rendered-kink: #'NO'(typcl 5),'RADIAL','BRAID'(rare2),'SPIRAL'(v.rare1)
+    options=( ['NO',]*5 + ['RADIAL','BRAID']*2 + ['SPIRAL'] )
+    h_b.kink= options[np.random.randint(len(options))]
+    #
+
+def style_tail_hair( p_hairless=.3, i_hair_set=None, max_imod=3):
+    ''' Deactivates the active hair set with probability p_hairless
+    If i_hair_set is None, acts on all hair sets 
+    max_imod is inclusive and is 1 larger than the index of the largest tail hair set
+    '''
+    # tail hair: # can access via w (specific, including visibility) or bpy.data.particles[]
+    if i_hair_set is None:
+        #imod=0 is Armature, imod=1 is hair_body
+        imods=range(2, max_imod+1)
+    else:
+        imods=[i_hair_set+1]
+    for imod in imods:
+        h_t_w = bpy.data.objects['w'].modifiers[imod]
+        h_t = bpy.data.particles["hair_tail"]
+        if rnd()<p_hairless:
+            h_t_w.show_render = False #deactivate
+        else:
+            h_t.child_type = ['NONE','SIMPLE','INTERPOLATED'][np.random.randint(3)]
+            if h_t.child_type != 'NONE':
+                h_t.rendered_child_count = np.random.randint(10,50)
+                #
+                options=( ['NO','CURL','RADIAL','WAVE', 'BRAID','SPIRAL'] )
+                h_t.kink= options[np.random.randint(len(options))]
+        # possible approach to programmatic combing:
+    #    for hair in bpy.data.objects['w'].particle_systems[0].particles:
+    #...     if hair.location[2] > 1:
+    #...         for hkey in hair.hair_keys:
+    ###...             hkey.co_local /=3
+                
+
+def style_hair(random_state=None):
+    ''' Deactivates tail hair sets with finite probability '''
+    if random_state is not None:
+        np.random.set_state(random_state)
+    style_body_hair()
+    style_tail_hair()
+    
+                
+def cacheCombedTailHair(cache_name_string,hair_set=1):
+    cache_context = bpy.context.scene.objects.active
+    bpy.context.scene.objects.active=bpy.data.objects['w']
+    aaaa=np.array([ [i.co_local for i in j.hair_keys] 
+                    for j in bpy.data.objects['w'].particle_systems[hair_set].particles ])
+    bpy.context.object[cache_name_string]=aaaa.tolist()
+    bpy.context.scene.objects.active = cache_context 
+
+def prepareForMotion():
+    '''Return cache of what layers and what modifiers were active, and activate all'''
+    #apparently, need to visualize all layers to move the respective objects
+    layers_backup = []
+    for i,l in enumerate(bpy.context.scene.layers):
+        layers_backup.append(l)
+        bpy.context.scene.layers[i]=True
+#    for l in bpy.context.scene.layers:
+#        print("debug:",l)
+    #also looks like all hair need to be visible to be moved properly:
+    mod_render_backup=[]
+    mod_view_backup=[]
+    for mod in bpy.data.objects['w'].modifiers:
+        mod_render_backup.append( mod.show_render )
+        mod.show_render=True
+        mod_view_backup.append( mod.show_viewport )
+        mod.show_viewport=True
+    #
+    return ( layers_backup, mod_render_backup, mod_view_backup )
+
+def completeMotion(cache):
+    ( layers_backup, mod_render_backup, mod_view_backup ) = cache
+    for i,l in enumerate(bpy.context.scene.layers):
+        bpy.context.scene.layers[i]=layers_backup[i]
+    for i, mod in enumerate(bpy.data.objects['w'].modifiers):
+        mod.show_render=mod_render_backup[i]
+        mod.show_viewport = mod_view_backup[i]
+
+def changeTailLength(scale):
+    '''assumes scale range: 0.6...1
+    Note this function changes which tail hair set is visible, thus should be called
+    before styling tail hair'''
+    #
+    #Simply scaling destroys combing, re-comb from memorized arrays
+    # read one of the arrays created from manually combed tails with nearby scale
+    # obtained using cacheCombedTailHair
+    #
+    # remember context:
+    active_cache=bpy.context.scene.objects.active
+    #
+    ##rescale bones:
+    cache=prepareForMotion()
+    bpy.context.scene.objects.active=bpy.data.objects['Armature']
+    #This actually rescales the entire tail!
+    bpy.context.object.pose.bones["Bone.008"].scale[1]=scale
+    #tail thickness profile: could also change scale[0] and [2] from .7 to 1.2
+    #
+    completeMotion(cache)
+    #
+    ##re-comb hair:
+    # find appropriate hair set and cache:
+    bpy.context.scene.objects.active=bpy.data.objects['w']
+    #print("debug: scale=",scale)
+    if scale<0.85:
+        hair_set=2
+        cache_name_string="comb_tail_set2_0.8"
+    else:
+        hair_set=1
+        cache_name_string='comb_tail_1.0v1'
+    #activate the hair set and deactivate others:
+    for iset in range(1,3):
+        imod=iset+1
+        if iset==hair_set:
+            bpy.data.objects['w'].modifiers[imod].show_render=True
+            bpy.data.objects['w'].modifiers[imod].show_viewport=True
+        else:
+            bpy.data.objects['w'].modifiers[imod].show_render=False
+            bpy.data.objects['w'].modifiers[imod].show_viewport=False
+    # apply cache:
+    if cache_name_string is not None:
+        for j,xj in enumerate(bpy.data.objects['w'].particle_systems[hair_set].particles):
+            #if((j%10)==0):
+            #    print("debug: j=",j)
+            for i,xi in enumerate(xj.hair_keys):
+                xi.co_local=bpy.context.object[cache_name_string][j][i]
+    #
+    #restore context:
+    bpy.context.scene.objects.active=active_cache 
+                
+#def initializePose():
+#    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+#    bpy.ops.object.mode_set(mode='POSE')
+#    bpy.data.objects['Armature'].data.bones['0-control'].select=True    
+def chooseBodyPose(random_state=None):
+    '''calls changeTailLength(), thus changing which tail hair set is visible, 
+    should be called before styling tail hair'''
+    if random_state is not None:
+        np.random.set_state(random_state)
+    #    
+    cache=prepareForMotion()
+    #
+    ###################### choose pose ##
+    #
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.ops.object.mode_set(mode='POSE')
+    #
+    #head position: ###
+    #bpy.data.objects['Armature'].data.bones['Bone-neck'].select=True # make sure toggling next DEselects everything
+    bpy.ops.pose.select_all(action='DESELECT')
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.data.objects['Armature'].data.bones['Bone-neck'].select=True
+    bpy.ops.pose.rot_clear()
+    v = 0.3*np.random.randn()
+    val1 = -0.1+v if np.abs(v)<0.4 else 0
+    v = 0.4*np.random.randn()
+    val2 = v if np.abs(v)<0.5 else 0
+    v = 0.2*np.random.randn()
+    #val3 = v if np.abs(v)<0.3 else 0
+    val3 = v if (np.abs(v)<0.25 and val2<0.3) else 0
+    bpy.ops.transform.rotate(value=val1, axis=(1,0,0)) #up-don from -30 up to 18 (i.e. -6 +-24)
+    bpy.ops.transform.rotate(value=val2, axis=(0,1,0)) #left-right up to 30
+    bpy.ops.transform.rotate(value=val3, axis=(0,0,1)) #left-right up to 20
+    #
+    ### head shape: ###
+    bpy.context.object.pose.bones["Bone-neck"].scale=( np.random.randn(3)*0.1 +1 ) # 3-tuple from 0.8 to 1.2 each
+    #
+    # rear leg position: ###
+    bpy.ops.pose.select_all(action='DESELECT')
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.data.objects['Armature'].data.bones['Bone-thigh-left'].select=True
+    bpy.ops.pose.rot_clear()
+    vleg=-1.7*rnd()
+    bpy.ops.transform.rotate(value=vleg, axis=(1,0,0)) # -, up to -90 (with distortions)
+    bpy.ops.pose.select_all(action='TOGGLE')
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.data.objects['Armature'].data.bones['Bone-knee-left'].select=True
+    bpy.ops.pose.rot_clear()
+    if rnd()>0.5:
+        bpy.ops.transform.rotate(value=vleg*-1.2, axis=(1,0,0)) # +, ~ -2/3 of thigh
+        bpy.ops.pose.select_all(action='TOGGLE')
+        bpy.context.scene.objects.active = bpy.data.objects['Armature']
+        bpy.data.objects['Armature'].data.bones['Bone-ankle-left'].select=True
+        bpy.ops.pose.rot_clear()
+        bpy.ops.transform.rotate(value=vleg*-0.35, axis=(1,0,0)) # +, remainder of thigh
+    else:
+        bpy.ops.transform.rotate(value=vleg*-0.65, axis=(1,0,0)) # +, ~ -2/3 of thigh
+        bpy.ops.pose.select_all(action='TOGGLE')
+        bpy.context.scene.objects.active = bpy.data.objects['Armature']
+        bpy.data.objects['Armature'].data.bones['Bone-ankle-left'].select=True
+        bpy.ops.pose.rot_clear()
+        bpy.ops.transform.rotate(value=vleg*0.35, axis=(1,0,0)) # +, remainder of thigh
+            #
+    completeMotion(cache)
+    #
+    #tail length: scale[1] from .7 to 1.0
+    #bpy.context.object.pose.bones["0-control"].scale[1]= .6 + .4*rnd()
+    changeTailLength(.6 + .4*rnd())
+    #
+    #
+    return (val1,val2,val3,vleg) # just in case, not used presently
+
+
+
+def restorePoseAndTail():
+    
+    cache=prepareForMotion()
+    #
+    #restore all armature positions:
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.ops.object.mode_set(mode='POSE')
+    bpy.data.objects['Armature'].data.bones['Bone-neck'].select=True
+    bpy.data.objects['Armature'].data.bones['Bone-thigh-left'].select=True
+    bpy.data.objects['Armature'].data.bones['Bone-knee-left'].select=True
+    bpy.data.objects['Armature'].data.bones['Bone-ankle-left'].select=True
+    bpy.data.objects['Armature'].data.bones['0-control'].select=True
+    bpy.ops.pose.rot_clear()
+#    bpy.ops.anim.keyframe_insert_menu(type='WholeCharacter')
+    #
+    completeMotion(cache)
+
+
+
+def placeCamera(params=None, random_state=None):
+    
+    if random_state is not None:
+        np.random.set_state(random_state)
+    #
+    ##################################
+    ##  choose camera location: ###
+    #
+    # rotation - should be in YZX Euler mode;    
+    #origin.rotation_euler[2]=np.radians(0)
+    if params is None:
+    #slightly favor looking from the left:
+        _params = np.zeros(7)
+        #rotations:
+        _params[0] = np.radians(100*np.random.randn() )       # Z [2] - front -90 /left 0/back 90/right 180,
+        _params[1] = np.radians(10*np.random.randn() )          # X [0] - tilt (-10..10 normal, -20...20 substantial)
+        _params[2] = np.radians(45*rnd())       # Y [1] - from top -45 / side+above 0 / horizontally 45;
+        #scale:
+        #_params[3] = np.clip( 0.7 + np.random.randn()*0.2, 0.4, 1.4) # realistic usage
+        _params[3] = np.clip( 0.5 + np.random.randn()*0.1, 0.4, 1.)  # close-up
+        #shift:
+        _params[4:6] = (_params[3]-0.35)*5*rnd(2)
+        _params[6] = (_params[3]-0.3)*5*rnd() 
+    else:
+        _params=params.copy()
+    #
+    origin.rotation_euler[2] = _params[0]       # Z [2] - front -90 /left 0/back 90/right 180,
+    origin.rotation_euler[0] = _params[1]          # X [0] - tilt (-10..10 normal, -20...20 substantial)
+    origin.rotation_euler[1] = _params[2]       # Y [1] - from top -45 / side+above 0 / horizontally 45;
+    #
+    # distance - scale of "origin", preferred range 0.4 to 1.2 , ideally 0.45...0.9
+    #  full-screen-close-up is 0.35 from above, 0.3 from a side
+    scale=_params[3] 
+    origin.scale=( scale, scale, scale)
+    #
+    # shift - normally at (0,0,1),    
+    # maxzshift=(scale-0.3)*5 # <0 might and <-8 will cause problems)
+    # maxxyshift =(scale-0.35)*5 (at small scales, +y is most sensitive)
+    shift = _params[4:]
+    origin.location= np.array([0,0,1])+shift
+    #
+    return _params
+
+
+
+
+def positionTailAt(vert=0,horiz=0):
+
+    cache=prepareForMotion()
+    #x -up (0.2-upright, 0.25..0.3 -slightly frwrd)/down(0.15-fully,0.2-bent in), 
+    #y -left/right (0.4 is full semicircle)
+    bpy.context.scene.objects.active = bpy.data.objects['Armature']
+    bpy.ops.object.mode_set(mode='POSE')
+    bpy.ops.pose.select_all(action='DESELECT')
+    bpy.data.objects['Armature'].data.bones['0-control'].select=True
+    bpy.ops.pose.rot_clear()
+    bpy.ops.transform.rotate(value=vert, axis=(1,0,0))  
+    bpy.ops.transform.rotate(value=horiz, axis=(0,1,0))  
+    completeMotion(cache)
+
+def resetUsualLayers():    
+    layers_backup = [i for i in bpy.context.scene.layers]
+    bpy.context.scene.layers[0]=True
+    bpy.context.scene.layers[1]=False
+    return layers_backup
+
+def renderAsIs(fname):
+    # memorize what needs to be restored:
+    layers_backup = [i for i in bpy.context.scene.layers]
+    bpy.context.scene.layers[0]=True
+    bpy.context.scene.layers[1]=False
+    bpy.data.scenes['Scene'].render.filepath = fname
+    bpy.ops.render.render(write_still=True)
+    #restore:
+    bpy.context.scene.layers = layers_backup
+    
+    
+    
+def renderRefLayer2Only(fname):
+
+    ## render reference - tail position
+    
+    # memorize what needs to be restored:
+    layers_backup = [i for i in bpy.context.scene.layers]
+    old_amb = bpy.context.scene.world.light_settings.environment_energy
+    bpy.context.scene.world.light_settings.environment_energy = 1.0
+    spherecache= (bpy.data.objects['SphMark.tailend'].scale, bpy.data.objects['SphMark.tailroot'].scale)
+    bkgr_cache=bpy.data.textures["Background"].type
+    bpy.data.textures["Background"].type = 'NONE'
+    #
+    #'SphMark.tailend' scale 0.01
+    bpy.context.scene.layers[1]=True
+    bpy.context.scene.layers[0]=False
+    bpy.data.scenes['Scene'].render.filepath = fname
+    bpy.ops.render.render(write_still=True)
+    bpy.data.objects['SphMark.tailend'].scale=[0.01]*3
+    bpy.data.objects['SphMark.tailroot'].scale=[0.01]*3
+    # restore:
+    bpy.context.scene.world.light_settings.environment_energy = old_amb
+    bpy.context.scene.layers = layers_backup
+    (bpy.data.objects['SphMark.tailend'].scale, bpy.data.objects['SphMark.tailroot'].scale) = spherecache
+    bpy.data.textures["Background"].type = bkgr_cache
+
+def renderRefHairlessDog(fname):
+
+    ## render reference - tail position
+    
+    # memorize what needs to be restored:
+    old_amb = bpy.context.scene.world.light_settings.environment_energy
+    layers_backup = [i for i in bpy.context.scene.layers]
+    szncache = ( szn.data.materials[0].texture_slots[0].color, szn.data.materials[0].diffuse_color )
+    planecache = ( pln.data.materials[0].diffuse_color, pln.data.materials[0].texture_slots[0].color )
+    bckgrcache = ( bpy.data.textures["Background"].type )
+    dogcolorcache = [ (m.diffuse_color, m.diffuse_intensity, m.specular_intensity) for m in bpy.data.objects['w'].data.materials ]
+    doghaircache = ( bpy.data.objects['w'].modifiers[1].show_render, bpy.data.objects['w'].modifiers[2].show_render )
+    spherecache= (bpy.data.objects['SphMark.tailend'].scale, bpy.data.objects['SphMark.tailroot'].scale)
+
+    #change settings:
+    bpy.context.scene.world.light_settings.environment_energy = 1.0
+    bpy.context.scene.layers[1]=True
+    bpy.context.scene.layers[0]=True
+    ( szn.data.materials[0].texture_slots[0].color, szn.data.materials[0].diffuse_color ) = ( (0,0,0),(0,0,0) )
+    ( pln.data.materials[0].diffuse_color, pln.data.materials[0].texture_slots[0].color ) = ( (0,0,0),(0,0,0) )
+    ( bpy.data.textures["Background"].type ) = 'NONE'
+    for i,m in enumerate(bpy.data.objects['w'].data.materials):
+        (m.diffuse_color, m.diffuse_intensity, m.specular_intensity) = ( (0,0,0),0,0)
+    ( bpy.data.objects['w'].modifiers[1].show_render, bpy.data.objects['w'].modifiers[2].show_render ) = (False, False)
+    bpy.data.objects['SphMark.tailend'].scale=[0.035]*3
+    bpy.data.objects['SphMark.tailroot'].scale=[0.045]*3
+    
+    # render/save
+    bpy.data.scenes['Scene'].render.filepath = fname
+    bpy.ops.render.render(write_still=True)
+
+    # restore:
+    bpy.context.scene.world.light_settings.environment_energy = old_amb
+    bpy.context.scene.layers = layers_backup
+    ( szn.data.materials[0].texture_slots[0].color, szn.data.materials[0].diffuse_color ) = szncache
+    ( pln.data.materials[0].diffuse_color, pln.data.materials[0].texture_slots[0].color ) = planecache
+    ( bpy.data.textures["Background"].type ) = bckgrcache
+    for i,m in enumerate(bpy.data.objects['w'].data.materials):
+        (m.diffuse_color, m.diffuse_intensity, m.specular_intensity) = dogcolorcache[i]
+    ( bpy.data.objects['w'].modifiers[1].show_render, bpy.data.objects['w'].modifiers[2].show_render ) = doghaircache
+    (bpy.data.objects['SphMark.tailend'].scale, bpy.data.objects['SphMark.tailroot'].scale) = spherecache
+    
+
+####################################################################################################################
+
+####################################################################################################################
+
+
+
+################################################## main loop:
+
+def main( Nposes=20, iverts=range(0,9), ihorizs=range(0,9) ):
+ with open(csvfname, "w") as csvfile:
+    
+    initializePose()
+
+
+    for ii in range(Nposes):
+        print("ii=", ii, ",  state =\n", np.random.get_state())
+        
+        bpy.context.scene.frame_current=1
+
+
+        ##  choose camera location: ####
+        camera_params= placeCamera()
+
+        ####### extra objects: #########    
+        
+        # parameters are typically boolean, thus can generate them using rnd() right inside function calls:
+        
+        placeSuzane( False )      ## Suzane
+        showPlane( visible=False, grass=False, carpet=False)
+        showBackground(False)
+        #placeSuzane( rnd()<.5 )      ## Suzane
+    #    showPlane( visible=(rnd()<.8),grass=(rnd()<.2), carpet=(rnd()<.2), blue=(rnd()<.5) ) ## plane
+        #could additionaly scale plane in the 5...>20 range (now 18.5)
+        #showBackground(rnd()<.3)  # bckgrnd image - should ONLY be used if the plane and Suzane are both invisible    
+
+        ############ light:            
+        placeLights()     
+        
+        ##################### dog:
+            
+        #colorDog( target_color=None)
+        ## dog hair --- turn off when judging tail end visibility        
+
+        #set_debug_state()
+        print("debug ii=", ii, ", before style_hair state =\n", np.random.get_state())
+        
+
+        chooseBodyPose()
+
+        #style_hair()
+        HAIR_LENGTH_FACTOR = scale_hair(min=0.11,max=2)    # hair length (to be restored later!! -search RESTORE below):
+
+        for ivert in iverts:
+          for ihoriz in ihorizs:
+    #    for ivert in range(0,9,2):
+    #      for ihoriz in range(0,9,2):
+            print("debug ii=", ii, ", ivert=", ivert, ", ihoriz=", ihoriz, " before positionTailAt state =\n", np.random.get_state())
+
+            ## tail position: ###################
+            #x -up (0.2-upright, 0.25..0.3 -slightly frwrd)/down(0.15-fully,0.2-bent in), 
+            #y -left/right (0.4 is full semicircle)
+            vert = (ivert-3)*0.05
+            horiz = (ihoriz-4)*0.1
+            positionTailAt(vert=vert,horiz=horiz)
+
+            bpy.ops.anim.keyframe_insert_menu(type='WholeCharacter')
+
+
+    #bpy.context.scene.frame_end=1
+    #bpy.ops.render.render(animation=True)
+
+
+            ## render raw picture    
+            thisfname = fnamebase+str(ii)+'_'+str(ivert)+'_'+str(ihoriz)
+
+            renderAsIs( thisfname +'_raw.png' )
+
+            ## render reference - tail position
+            renderRefLayer2Only( thisfname +'_ref-tailend.png')
+            
+            csvfile.write(thisfname+","+str(vert)+","+str(horiz)+"\n")
+
+
+        #    ## render reference - tail visibility
+        #    old_amb = bpy.context.scene.world.light_settings.environment_energy
+        #    bpy.context.scene.world.light_settings.environment_energy = 1.0
+        #    bpy.context.scene.world.light_settings.environment_energy = 1.0
+        #    bpy.context.scene.layers[1]=True
+        #    bpy.context.scene.layers[0]=False
+        #    bpy.data.scenes['Scene'].render.filepath = fnamebase+str(i)+'_ref-tailend.png'
+        #    #bpy.ops.render.render(write_still=True)
+        #    bpy.context.scene.world.light_settings.environment_energy = old_amb
+
+        
+        # restore hair length: RESTORE:
+        scale_hair(scale=1./HAIR_LENGTH_FACTOR)
+
+        #restore position:
+        restorePoseAndTail()
+        bpy.ops.anim.keyframe_insert_menu(type='WholeCharacter')
+
+        
+
+### run main function:
+main( 10, range(1,9,3), range(1,9,3) )
+    

@@ -47,7 +47,7 @@ Building a dataset was actually something that I would need to spend a lot of ti
 (Image taken from Blender Foundation)
 
 Blender (stylized as blender, lowercase) is a 3D modeling software that has an interesting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also change the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. 
-The advantages of my approach is that my database has an unlimited size. The primary disadvantage is that the amount of variance that is present is limited by how much variance I was able to create.
+The advantages of my approach is that my database has an unlimited size. The primary disadvantage is that the amount of pictures produced is limited.
 
 #### Building my Network
 ##### Squeezenet
@@ -60,7 +60,7 @@ Squeezenet is a pretrained model, meaning that the weights within it are very we
 TFRecords is a quick, efficient way of storing information obtained in TensorFlow onto a harddrive that will later be read by TensorFlow again. I learned how to use TFRecords for two reasons: 1) in order to save the outputs of Squeezenet to later run through my network and 2) in order to save the weights that were generated during training.
 
 #### Brief Overview of Variants of My Layers:
-See an indepth look in the History of Development directory
+See an indepth look of my variants in the History of Development directory
 
 ##### Version 1
 Loss did not decrease well with version 1. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
