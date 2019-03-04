@@ -10,3 +10,7 @@ Mentor Related - https://github.com/mbarabash-gtchs/Senior-Project/tree/master/M
 
 Takeaway (Product) - https://github.com/mbarabash-gtchs/Senior-Project/tree/master/Takeaway
 
+Conference Sheets - https://github.com/mbarabash-gtchs/Senior-Project/tree/master/Conference%20Sheets
+
+Project Proposal - https://github.com/mbarabash-gtchs/Senior-Project/tree/master/Project%20Proposal
+
