@@ -30,4 +30,9 @@ Version 4 made no immediate changes to appended layers; the only changes were to
 I eventually changed the appended layers as well. One of the networks was deeper and had more layers (named Version 4 extended), while the other used more average pools instead of convolutions (named Version 4 average pool). I did not get significant changes in results from either of them.
 
 #### Version 5
-Version 5 used a different approach than prior versions; instead of taking the size of the layers and decreasing them slowly, it instead changed the size of the layers to be 13x13x18 as quickly as possible and then remained at that size for 6 layers prior to being converted to the output size. This, for some reason, caused the validation accuracy to rise to higher values than I had previously recorded.
+Version 5 used a different approach than prior versions; instead of taking the size of the layers and decreasing them slowly, it instead changed the size of the layers to be 13x13x18 as quickly as possible and then remained at that size for 6 layers prior to being converted to the output size. This, for some reason, caused the validation accuracy to rise to higher values than I had previously recorded. 
+
+![alt text](https://i.imgur.com/K1DsXIJ.png)
+
+This graph shows both fit and validation accuracy along both the horizontal and vertical axis. The solid lines shows the validation accuracy,  while the dashed show fit accuracy. Red represents vertical accuracy, while green represents horizontal.
+Due to time restraints, this ended up being the last variant of my network.
