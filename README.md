@@ -32,7 +32,7 @@ To elaborate on step 4: If I wanted the network to tell me whether a picture is 
 
 
 ### Final Product
-My final product consists of a script which generates my datset and of a neural network that detects the position of a dog's tail. The dataset generator does what it name implies. means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. It may not be clear how a program like this may be useful. To give an example, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network are easy to imagine; for example, a network that has been trained on MRI scans could learn to detect the position of tumors. 
+My final product consists of a script which generates my dataset and of a neural network that detects the position of a dog's tail. The dataset generator does what it name implies. means that the network would need to find a dog in an image, find the tail of the dog, and then find how the tail is positioned relative to the dog. It may not be clear how a program like this may be useful. To give an example, if a network can detect the position of a tail relative to a dog, then it would be able to detect other objects relative to another. The applications of such a network are easy to imagine; for example, a network that has been trained on MRI scans could learn to detect the position of tumors. 
 
 
 ## Approach to Problem
@@ -46,7 +46,7 @@ Building a dataset was actually something that I would need to spend a lot of ti
 ![alt text](https://i.imgur.com/zNROvm9.png)
 (Image taken from Blender Foundation)
 
-Blender (stylized as blender, lowercase) is a 3D modeling software that has an interesting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also change the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. Along with the picture itself, a file that containes the correct labels for each picture is generated simultaneously. 
+Blender (stylized as blender, lowercase) is a 3D modeling software that has an interesting upside compared to other software: every action in blender can be coded as a script. I took advantage of this by creating a script that would automatically generate a dog in a random position, with its tail wagged in a random direction. The script would also change the way that dog itself looks, from the color of the dog to the amount of hair it has and the length of its tail. Other factors such as the lighting of the scene as well as optional features that can be turned on or off, such as adding a background picture, changing the floor, and objects that could complicate the scene would help vary the scene. Along with the picture itself, a file that contains the correct labels for each picture is generated simultaneously. 
 The advantages of my approach is that my database has an unlimited size. The primary disadvantage is that the amount of pictures produced is limited.
 
 #### Building my Network
@@ -55,12 +55,12 @@ Squeezenet is a publicly available, open source neural network that is pretraine
 ##### Learning TensorFlow
 Learning TensorFlow (an open-source software library designed for handling data) was something that I would do throughout the coding process. TensorFlow; the easiest way seems to be to learn through application, so I learned TensorFlow as I built variants of my layers.
 ##### Usage of Squeezenet
-Squeezenet is a pretrained model, meaning that the weights within it are very well optimized. This means that, during training, squeezenets values should be touched minimally or not at all (A less important but valid reason is that training a larger network requires more memory on a computer. While my computer may have been able to handle this training, it would also likely cause training to last longer). My approach was to have Squeezenet perform its work on the data, then have my model train on the outputs of Squeezenet. 
+Squeezenet is a pretrained model, meaning that the weights within it are very well optimized. This means that, during training, Squeezenet's values should be touched minimally or not at all (A less important but valid reason is that training a larger network requires more memory on a computer. While my computer may have been able to handle this training, it would also likely cause training to last longer). My approach was to have Squeezenet perform its work on the data, then have my model train on the outputs of Squeezenet. 
 ##### TFRecords
-TFRecords is a quick, efficient way of storing information obtained in TensorFlow onto a harddrive that will later be read by TensorFlow again. I learned how to use TFRecords for two reasons: 1) in order to save the outputs of Squeezenet to later run through my network and 2) in order to save the weights that were generated during training.
+TFRecords is a quick, efficient way of storing information obtained in TensorFlow onto a hard drive that will later be read by TensorFlow again. I learned how to use TFRecords for two reasons: 1) to save the outputs of Squeezenet to later run through my network and 2) to save the weights that were generated during training.
 
 #### Brief Overview of Variants of My Layers:
-See an indepth look of my variants in the History of Development directory
+See an in-depth look of my variants in the History of Development directory
 
 ##### Version 1
 Loss did not decrease well with version 1. I later learned that the variance in my dataset resulted in about half of all images to be messed up. After solving this issue, I created version 2.
